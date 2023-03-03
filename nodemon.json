@@ -1,0 +1,7 @@
+{
+    "watch": [
+        "src"
+    ],
+    "ext": "ts,json",
+    "exec": "swc-node -r tsconfig-paths/register -r dotenv/config"
+}
