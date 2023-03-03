@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "scratch": "nodemon src/scratch.ts",
     "dev": "nodemon src/index.ts",
     "build": "swc ./src -d build",
     "start": "node -r dotenv/config ./build/index.js"

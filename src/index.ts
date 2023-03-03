@@ -13,7 +13,7 @@ function getMediaIdFromLink(url: string): string | null {
   return mediaId;
 }
 
-async function mediaAttachmentFromLink(link: { domain: string; url: string }) {
+async function getLinkAttachments(link: { domain: string; url: string }) {
   const { url } = link;
   const mediaId = getMediaIdFromLink(url);
 
@@ -23,9 +23,9 @@ async function mediaAttachmentFromLink(link: { domain: string; url: string }) {
 
   if (!mediaId) {
     // The provided link is NOT a piece of media, so we should just use OG info
-    attachment.blocks = [...(await generateOGBlocks(url))];
+    attachment.blocks = [...(await generateOGBlocks({ url }))];
   } else {
-    attachment.blocks = [...(await generateMediaBlocks(url, mediaId))];
+    attachment.blocks = [...(await generateMediaBlocks({ url, mediaId }))];
   }
 
   return attachment;
@@ -37,8 +37,10 @@ async function main() {
   slack.event('link_shared', async ({ event }) => {
     const { links } = event;
 
+    if (event.channel === 'COMPOSER') return;
+
     let unfurls: LinkUnfurls = {};
-    const attatchments = await Promise.all(links.map(mediaAttachmentFromLink));
+    const attatchments = await Promise.all(links.map(getLinkAttachments));
     attatchments.forEach((attachment, index) => {
       if (!attachment) return;
       unfurls[links[index].url] = attachment;
